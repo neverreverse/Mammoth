@@ -5,7 +5,6 @@ var schema = new Schema({
     track_id:{ type:String },
     track_location:{ type:String},
     author_id:{ type:Schema.ObjectId },
-    top:{ type:Boolean, default:false },
     reply_count:{ type:Number, default:0 },
     visit_count:{ type:Number, default:0 },
     collect_count:{ type:Number, default:0 },
