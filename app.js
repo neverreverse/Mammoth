@@ -18,7 +18,12 @@ app.configure(function () {
     app.set('view engine', 'html');
     app.use(express.favicon());
     app.use(express.logger('dev'));
-    app.use(express.bodyParser());
+    app.use(express.bodyParser({
+        uploadDir: __dirname + '/uploads',
+        //keepExtensions: true,
+        limit: '50mb'
+    }));
+
     app.use(express.methodOverride());
     app.use(express.cookieParser('your secret here'));
     app.use(express.session());

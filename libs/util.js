@@ -1,4 +1,3 @@
-var xss = require('xss');
 
 exports.format_date = function (date, friendly) {
   var year = date.getFullYear();
@@ -87,5 +86,23 @@ exports.escape = function(html){
  * @return {string}
  */
 exports.xss = function (html) {
+  var xss = require('xss');
   return xss(html);
 };
+
+exports.guid = function(){
+    var S4 = function ()
+    {
+        return Math.floor(
+            Math.random() * 0x10000 /* 65536 */
+        ).toString(16);
+    };
+
+    return (
+        S4() + S4() + "-" +
+            S4() + "-" +
+            S4() + "-" +
+            S4() + "-" +
+            S4() + S4() + S4()
+        );
+}

@@ -10,11 +10,14 @@ var mongoose = require('mongoose'),
     crypto = require('crypto');
 
 var schema = new Schema({
+    id:Number,
     name:String,
     hash_password:String,
     sex:Number,
     email:String,
+    image:String,
     phone:String,
+    level:Number,
     address:{city:String, street:String}
 });
 

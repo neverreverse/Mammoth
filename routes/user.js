@@ -1,6 +1,7 @@
 /*
  * GET users listing.
  */
+var mongoose = require('mongoose');
 
 var UsersModel = require("./../models").Users;
 var path = require('path');
@@ -8,11 +9,29 @@ var path = require('path');
 exports.list = function (req, res) {
     res.send("respond with a resource");
 };
+
 exports.getUser = function(req, res) {
-   var user =  new UsersModel(req.body);
-   
+    var userId = req.params['id'];
+    console.log("Get USER by ID:"+userId);
+    try{
+        var _userId = mongoose.Types.ObjectId(userId);
+
+    }catch(e){
+        return res.json({err:'invalid user id'});        
+    };
+
+    UsersModel.findOne({_id:_userId},function(err,user){
+    if (err)
+        return res.json({err:err});
+    if (!user) {
+        return res.json({err:'user does not exists'});
+    }
+        return res.json(user);
+    });
 }
+
 exports.create = function (req, res) {
+    console.log(req.body);
     var createUser = new UsersModel(req.body);
     UsersModel.findOne({name:req.body.name}, function (err, user) {
         if (err)

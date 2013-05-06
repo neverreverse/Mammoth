@@ -14,6 +14,7 @@ var UsersDAO = function (user) {
 module.exports = UsersDAO;
 
 UsersDAO.prototype.save = function (callback) {
+	
     var usersEntity = new UsersModel(this.user);
     usersEntity.save(function (err, data) {
         if (err)
