@@ -20,8 +20,6 @@ app.configure(function () {
     app.use(express.logger('dev'));
     app.use(express.bodyParser({
         uploadDir: __dirname + '/uploads',
-        //keepExtensions: true,
-        limit: '50mb'
     }));
 
     app.use(express.methodOverride());

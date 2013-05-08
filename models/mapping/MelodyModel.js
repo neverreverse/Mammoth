@@ -2,8 +2,7 @@ var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 
 var schema = new Schema({
-    track_id:{ type:String },
-    track_location:{ type:String},
+    track: [Track]
     author_id:{ type:Schema.ObjectId },
     play_style:{type:Schema.ObjectId},
     reply_count:{ type:Number, default:0 },
