@@ -2,8 +2,8 @@ var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 
 var schema = new Schema({
-    track: [Track]
-    author_id:{ type:Schema.ObjectId },
+    track: {type:Schema.ObjectId},
+    author_id:{ type:Schema.ObjectId},
     play_style:{type:Schema.ObjectId},
     reply_count:{ type:Number, default:0 },
     visit_count:{ type:Number, default:0 },
