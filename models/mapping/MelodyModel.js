@@ -1,8 +1,17 @@
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 
-var schema = new Schema({
-    track: {type:Schema.ObjectId},
+var track_schema = new Schema({
+    track_location:{ type:String},
+    ref:{type:Number, default:0},
+    ext:{type:String},
+    author_id:{ type:Schema.ObjectId },
+    create_at:{ type:Date, default:Date.now },
+});
+
+var melody_schema = new Schema({
+    track: [track_schema],
+    description:{type:String},
     author_id:{ type:Schema.ObjectId},
     play_style:{type:Schema.ObjectId},
     reply_count:{ type:Number, default:0 },
@@ -14,4 +23,8 @@ var schema = new Schema({
     last_reply_at:{ type:Date, default:Date.now }
 });
 
-mongoose.model('Melody', schema);
+
+
+mongoose.model('Track', track_schema);
+
+mongoose.model('Melody', melody_schema);
