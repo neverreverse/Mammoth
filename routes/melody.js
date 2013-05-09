@@ -16,28 +16,44 @@ exports.getMelodyCollection=function(req,res){
 };
 
 exports.putMelody=function(req,res){
-
-//	console.log(req.body);
+	//console.log(req.body);
 	var track_id = req.body.track_id;
-	var track = new TrackModel({_id:mongoose.Types.ObjectId(track_id)});
+	var track = new TrackModel();
 
-	var new_track = track.find({_id: mongoose.Types.ObjectId(track_id)});
-	console.log(new_track);
-
-	var melody = new MelodyModel(req.body);
-	console.log(melody);
-	melody.save(function(err,data){
+	var melody = req.body;
+	melody.track = new Array();
+	TrackModel.findOne({_id: mongoose.Types.ObjectId(track_id)}, function(err,_track){
 		if(err){
 			return res.json({state:1,err:err});
 		}
-		return res.json();
+		melody.track.push( _track);
+		var new_melody = new MelodyModel(melody);
+		new_melody.save(function(err,data){
+			if(err){
+				return res.json({state:1,err:err});
+			}
+			console.log(data);
+			return res.json({state:0});
+		});
+
 	});
 
-	return res.json({state:0});
 };
 
 exports.putComment=function(req, res){
+	var comment = req.body;
+	var melody_id =req.body.melody_id;
+	console.log({ _id: mongoose.Types.ObjectId(melody_id)});
+	
+	MelodyModel.findOne({ _id: mongoose.Types.ObjectId(melody_id)}, function(err, _melody){
+		if(err){
+			return res.json({state:1,err:err});
+		}
+		_melody.comment.push(comment);
+		//MelodyModel.update(_melody);
 
+	})
+	return res.json({state:1,err:"Can not find the melody"});
 };
 
 exports.putTrack=function(req, res){

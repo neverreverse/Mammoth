@@ -9,6 +9,12 @@ var track_schema = new Schema({
     create_at:{ type:Date, default:Date.now },
 });
 
+var comment_schema = new Schema({
+    comment:{type:String},
+    author_id:{ type:Schema.ObjectId },
+    create_at:{ type:Date, default:Date.now },
+});
+
 var melody_schema = new Schema({
     track: [track_schema],
     description:{type:String},
@@ -20,7 +26,8 @@ var melody_schema = new Schema({
     create_at:{ type:Date, default:Date.now },
     update_at:{ type:Date, default:Date.now },
     last_reply:{ type:Schema.ObjectId },
-    last_reply_at:{ type:Date, default:Date.now }
+    last_reply_at:{ type:Date, default:Date.now },
+    comment:[comment_schema]
 });
 
 
@@ -28,3 +35,5 @@ var melody_schema = new Schema({
 mongoose.model('Track', track_schema);
 
 mongoose.model('Melody', melody_schema);
+
+mongoose.model('Comment', comment_schema);
