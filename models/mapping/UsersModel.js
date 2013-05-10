@@ -9,7 +9,7 @@ var mongoose = require('mongoose'),
     Schema = mongoose.Schema,
     crypto = require('crypto');
 
-var schema = new Schema({
+var user_schema = new Schema({
     id:Number,
     name:String,
     hash_password:String,
@@ -18,14 +18,16 @@ var schema = new Schema({
     image:String,
     phone:String,
     level:Number,
-    address:{city:String, street:String}
+    address:{city:String, street:String},
+    fans:[Schema.ObjectId],
+    friends:[Schema.ObjectId]
 });
 
-schema.virtual("password").set(function (password) {
+user_schema.virtual("password").set(function (password) {
     this.hash_password = encryptPassword(password);
 });
 
-schema.method("authenticate", function (plainText) {
+user_schema.method("authenticate", function (plainText) {
     return encryptPassword(plainText) === this.hash_password;
 });
 
@@ -33,4 +35,4 @@ function encryptPassword(password) {
     return crypto.createHash("md5").update(password).digest("base64");
 }
 
-mongoose.model('Users', schema);
+mongoose.model('Users', user_schema);

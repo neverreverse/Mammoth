@@ -13,7 +13,6 @@ var melody = require('./melody');
 module.exports = function (app) {
     app.get('/', index.index);
     
-
     app.get('/list', user.list);
     app.get('/blog', blog.list);
     //app.get('/user', user.list);
@@ -25,8 +24,7 @@ module.exports = function (app) {
 	app.get('/logout', user.logout);
     app.get('/user',   user.list);
     app.get('/melodyCollection/', melody.getMelodyCollection);
-
-
+    app.get('/friend/:id',user.addFriend);
     //melody entity
     app.get('/melody', melody.getMelodyList);
     app.get('/melody/:id', melody.getMelody);
@@ -34,7 +32,6 @@ module.exports = function (app) {
 
     app.get('/track', melody.getTrackList);
     app.get('/track/:id', melody.getTrack);
-
 
     app.get('/user/:id', user.getUser);
     app.post('/comment',melody.putComment);

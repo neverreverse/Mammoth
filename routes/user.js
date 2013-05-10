@@ -7,7 +7,15 @@ var UsersModel = require("./../models").Users;
 var path = require('path');
 
 exports.list = function (req, res) {
-    res.send("respond with a resource");
+    var query = UsersModel.find();
+    query.exec(function(err,_data){
+        console.log(_data);
+        if(err){
+            return res.json({state:1, err:err});
+        }
+
+        return res.json(_data);
+    }); 
 };
 
 exports.getUser = function(req, res) {
@@ -37,7 +45,7 @@ exports.create = function (req, res) {
         if (err)
             return res.json({err:err});
         if (user) {
-            return res.json({err:"用户名已经存在"});
+            return res.json({err:"User already exists"});
         }
         createUser.save(function (err, user) {
             if (err) {
@@ -49,13 +57,45 @@ exports.create = function (req, res) {
     });
 
 };
+exports.addFriend = function(req, res){
+    var user = req.session["user"];
+    if(!user){
+        return res.json({state:1,err:"Need login"});
+    }
+    console.log(user);
+    var friend_id = req.params['id'];
+    
+    try{
+        var _friend_id = mongoose.Types.ObjectId(friend_id);
+
+    }catch(e){
+        return res.json({err:'invalid friend id'});        
+    };
+
+    UsersModel.findOne({_id: _friend_id}, function(err, _user){
+        if(err)
+            return res.json({state:1, err:err});
+
+        UsersModel.update({_id: mongoose.Types.ObjectId(user._id)},{$set:{friends:_friend_id}} , function(err,_data){
+            if(err)
+                return res.json({state:1, err:err});
+            console.log(_data);
+            return res.json({state:0});
+        });
+
+    });
+
+    console.log(friend_id);
+
+    return res.json({state:1,err:"Unexpected error"});
+}
 
 exports.login = function (req, res) {
     UsersModel.findOne({name:req.body.name}, function (err, user) {
         if (err)
             return res.json({err:err});
         if (!user) {
-            return res.json({err:'用户名不存在'});
+            return res.json({err:'User does not exist'});
         }
         if (!user.authenticate(req.body.password))
             return res.json({err:'密码错误'});
