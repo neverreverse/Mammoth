@@ -24,12 +24,19 @@ module.exports = function (app) {
 	app.post('/login', user.login);
 	app.get('/logout', user.logout);
     app.get('/user',   user.list);
-    app.get('/user/:id', user.getUser);
+    app.get('/melodyCollection/', melody.getMelodyCollection);
+
 
     //melody entity
+    app.get('/melody', melody.getMelodyList);
     app.get('/melody/:id', melody.getMelody);
-    app.get('/melodyCollection/', melody.getMelodyCollection);
     app.post('/melody',melody.putMelody);
+
+    app.get('/track', melody.getTrackList);
+    app.get('/track/:id', melody.getTrack);
+
+
+    app.get('/user/:id', user.getUser);
     app.post('/comment',melody.putComment);
 
     app.post('/track',melody.putTrack);

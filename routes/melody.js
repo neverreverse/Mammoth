@@ -8,6 +8,21 @@ var mongoose = require('mongoose');
 
 var fs = require('fs');
 var utils = require("../libs/util");
+
+exports.getMelodyCollection=function(req,res){
+
+};
+exports.getMelodyList = function(req, res){
+	var query = MelodyModel.find();
+	query.exec(function(err,_data){
+		console.log(_data);
+		if(err){
+			return res.json({state:1, err:err});
+		}
+
+		return res.json(_data);
+	});	
+}
 exports.getMelody= function (req, res) {
 	var melody_id = req.params['id'];
 	console.log("Get Melody by ID:"+ melody_id);
@@ -27,10 +42,6 @@ exports.getMelody= function (req, res) {
     }
         return res.json(_melody);
     });
-
-};
-
-exports.getMelodyCollection=function(req,res){
 
 };
 
@@ -120,3 +131,19 @@ exports.putTrack=function(req, res){
   		});
 	});
 };
+
+exports.getTrackList=function(req,res){
+	var query = TrackModel.find();
+	query.exec(function(err,_data){
+		console.log(_data);
+		if(err){
+			return res.json({state:1, err:err});
+		}
+
+		return res.json(_data);
+	});	
+}
+
+exports.getTrack = function(req,res){
+
+}
