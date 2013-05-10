@@ -9,6 +9,25 @@ var mongoose = require('mongoose');
 var fs = require('fs');
 var utils = require("../libs/util");
 exports.getMelody= function (req, res) {
+	var melody_id = req.params['id'];
+	console.log("Get Melody by ID:"+ melody_id);
+	
+	try{
+        var _melody_id = mongoose.Types.ObjectId(melody_id);
+
+    }catch(e){
+        return res.json({err:'invalid melody  id'});        
+    };
+    
+    MelodyModel.findOne({_id:_melody_id},function(err,_melody){
+    if (err)
+        return res.json({err:err});
+    if (!_melody) {
+        return res.json({err:'Melody does not exists'});
+    }
+        return res.json(_melody);
+    });
+
 };
 
 exports.getMelodyCollection=function(req,res){
@@ -16,7 +35,6 @@ exports.getMelodyCollection=function(req,res){
 };
 
 exports.putMelody=function(req,res){
-	//console.log(req.body);
 	var track_id = req.body.track_id;
 	var track = new TrackModel();
 
@@ -25,6 +43,9 @@ exports.putMelody=function(req,res){
 	TrackModel.findOne({_id: mongoose.Types.ObjectId(track_id)}, function(err,_track){
 		if(err){
 			return res.json({state:1,err:err});
+		}
+		if(_track==null){
+			return res.json({state:1,err:"Can not find the track"});
 		}
 		melody.track.push( _track);
 		var new_melody = new MelodyModel(melody);
@@ -35,25 +56,39 @@ exports.putMelody=function(req,res){
 			console.log(data);
 			return res.json({state:0});
 		});
-
 	});
-
 };
 
 exports.putComment=function(req, res){
 	var comment = req.body;
 	var melody_id =req.body.melody_id;
-	console.log({ _id: mongoose.Types.ObjectId(melody_id)});
+	//console.log({ _id: mongoose.Types.ObjectId(melody_id)});
 	
 	MelodyModel.findOne({ _id: mongoose.Types.ObjectId(melody_id)}, function(err, _melody){
 		if(err){
 			return res.json({state:1,err:err});
 		}
+
+		if(_melody==null){
+			return res.json({state:1,err:"Can not find the melody"});
+		}
+
+		if(_melody.comment==undefined){
+			_melody.comment = new Array();
+		}
+
 		_melody.comment.push(comment);
-		//MelodyModel.update(_melody);
+
+		console.log(_melody);
+		MelodyModel.update({ _id: mongoose.Types.ObjectId(melody_id)}, {comment:_melody.comment},function(err, _data){
+			if(err){
+				return res.json({state:1,err:err});
+			}
+			return res.json({state:0});
+		});
 
 	})
-	return res.json({state:1,err:"Can not find the melody"});
+	return res.json({state:1,err:"unexpected error"});
 };
 
 exports.putTrack=function(req, res){
