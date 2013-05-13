@@ -25,17 +25,21 @@ module.exports = function (app) {
     app.get('/user',   user.list);
     app.get('/melodyCollection/', melody.getMelodyCollection);
     app.get('/friend/:id',user.addFriend);
+ 
     //melody entity
     app.get('/melody', melody.getMelodyList);
     app.get('/melody/:id', melody.getMelody);
     app.post('/melody',melody.putMelody);
+    app.post('/comment',melody.putComment);
 
     app.get('/track', melody.getTrackList);
     app.get('/track/:id', melody.getTrack);
+    app.post('/track', melody.putTrack);
 
     app.get('/user/:id', user.getUser);
-    app.post('/comment',melody.putComment);
+    app.post('/user', user.create);
 
-    app.post('/track',melody.putTrack);
+
+
 
 };

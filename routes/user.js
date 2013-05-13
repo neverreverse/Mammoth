@@ -62,9 +62,12 @@ exports.addFriend = function(req, res){
     if(!user){
         return res.json({state:1,err:"Need login"});
     }
-    console.log(user);
+
     var friend_id = req.params['id'];
-    
+    if(user._id == friend_id){
+        return res.json({state:1,err:"Can not add oneself as friend"});
+    }   
+
     try{
         var _friend_id = mongoose.Types.ObjectId(friend_id);
 
@@ -76,16 +79,16 @@ exports.addFriend = function(req, res){
         if(err)
             return res.json({state:1, err:err});
 
-        UsersModel.update({_id: mongoose.Types.ObjectId(user._id)},{$set:{friends:_friend_id}} , function(err,_data){
-            if(err)
+        UsersModel.update({_id: mongoose.Types.ObjectId(user._id)},{$push:{friends:_friend_id}} , function(err,_data){
+            if(err){
                 return res.json({state:1, err:err});
+            }
+
             console.log(_data);
             return res.json({state:0});
         });
 
     });
-
-    console.log(friend_id);
 
     return res.json({state:1,err:"Unexpected error"});
 }
@@ -98,7 +101,7 @@ exports.login = function (req, res) {
             return res.json({err:'User does not exist'});
         }
         if (!user.authenticate(req.body.password))
-            return res.json({err:'密码错误'});
+            return res.json({err:'invalid password'});
         req.session["user"] = user;
         res.json(user);
     });

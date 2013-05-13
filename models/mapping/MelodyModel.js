@@ -21,6 +21,7 @@ var melody_schema = new Schema({
     author_id:{ type:Schema.ObjectId},
     play_style:{type:Schema.ObjectId},
     reply_count:{ type:Number, default:0 },
+    label:[String],
     visit_count:{ type:Number, default:0 },
     collect_count:{ type:Number, default:0 },
     create_at:{ type:Date, default:Date.now },

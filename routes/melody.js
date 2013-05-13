@@ -59,6 +59,7 @@ exports.putMelody=function(req,res){
 			return res.json({state:1,err:"Can not find the track"});
 		}
 		melody.track.push( _track);
+
 		var new_melody = new MelodyModel(melody);
 		new_melody.save(function(err,data){
 			if(err){
@@ -133,6 +134,7 @@ exports.putTrack=function(req, res){
 };
 
 exports.getTrackList=function(req,res){
+
 	var query = TrackModel.find();
 	query.exec(function(err,_data){
 		console.log(_data);
@@ -146,4 +148,22 @@ exports.getTrackList=function(req,res){
 
 exports.getTrack = function(req,res){
 
+	var track_id = req.params['id'];
+	console.log("Get Track by ID:"+ track_id);
+	
+	try{
+        var _track_id = mongoose.Types.ObjectId(track_id);
+    }catch(e){
+        return res.json({err:'invalid Track id'});        
+    };
+    
+    TrackModel.findOne({_id:_track_id},function(err,_track){
+    if (err)
+        return res.json({state:1, err:err});
+    if (!_track) {
+        return res.json({state:1, err:'Melody does not exists'});
+    }
+        filename = "temp."+_track.ext;
+		return res.download(_track.track_location,filename);
+    });
 }
