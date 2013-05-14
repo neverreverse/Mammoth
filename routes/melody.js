@@ -66,7 +66,7 @@ exports.putMelody=function(req,res){
 				return res.json({state:1,err:err});
 			}
 			console.log(data);
-			return res.json({state:0,guid,data._id});
+			return res.json({state:0,guid:data._id});
 		});
 	});
 };
