@@ -57,41 +57,70 @@ exports.create = function (req, res) {
     });
 
 };
-exports.addFriend = function(req, res){
+exports.follow = function(req, res){
     var user = req.session["user"];
     if(!user){
         return res.json({state:1,err:"Need login"});
     }
 
-    var friend_id = req.params['id'];
-    if(user._id == friend_id){
-        return res.json({state:1,err:"Can not add oneself as friend"});
+    var follow_id = req.params['id'];
+    if(user._id == follow_id){
+        return res.json({state:1,err:"Can not follow oneself"});
     }   
 
     try{
-        var _friend_id = mongoose.Types.ObjectId(friend_id);
+        var _follow_id = mongoose.Types.ObjectId(follow_id);
 
     }catch(e){
-        return res.json({err:'invalid friend id'});        
+        return res.json({state:1,err:'invalid follow id'});        
     };
 
-    UsersModel.findOne({_id: _friend_id}, function(err, _user){
+    UsersModel.findOne({_id: _follow_id}, function(err, _user){
         if(err)
             return res.json({state:1, err:err});
+        var fans = _user.fans;
+        if(fans.contains(user._id)){
+            return res.json({state:1, err: "Already exists in fans list"});
+        }
 
-        UsersModel.update({_id: mongoose.Types.ObjectId(user._id)},{$push:{friends:_friend_id}} , function(err,_data){
-            if(err){
+        UsersModel.findOne({_id: mongoose.Types.ObjectId(user._id)},function(err,__user){
+            if(err)
                 return res.json({state:1, err:err});
+            
+            var follows = __user.follows;
+            if(follows.contains(follow_id)){
+                return res.json({state:1, err:"Already exists in follow list"});
             }
 
-            console.log(_data);
-            return res.json({state:0});
+            UsersModel.update({_id: mongoose.Types.ObjectId(user._id)},{$push:{follows:_follow_id}} , function(err,_data){
+                if(err){
+                    return res.json({state:1, err:err});
+                }
+                UsersModel.update({_id: _follow_id},{$push:{fans:mongoose.Types.ObjectId(user._id)}} , function(err,__data){
+                    if(err){
+                        return res.json({state:1, err:err});
+                    }
+                    return res.json({state:0});
+                });
+                
+            });
         });
-
     });
+    //return res.json({state:1,err:"Unexpected error"});
+};
 
-    return res.json({state:1,err:"Unexpected error"});
-}
+exports.followList = function(req, res){
+    var user = req.session["user"];
+    if(!user){
+        return res.json({state:1,err:"Need login"});
+    }
+    UsersModel.findOne({_id: mongoose.Types.ObjectId(user._id)},function(err,_user){
+        if(err){
+            return res.json({state:1,err:"Error user"});
+        }
+        return res.json({follows:_user.follows});
+    });
+};
 
 exports.login = function (req, res) {
     UsersModel.findOne({name:req.body.name}, function (err, user) {

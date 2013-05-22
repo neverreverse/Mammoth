@@ -10,6 +10,8 @@ var index = require('./index');
 var user = require('./user');
 var blog = require('./blog');
 var melody = require('./melody');
+
+
 module.exports = function (app) {
     app.get('/', index.index);
     
@@ -24,7 +26,9 @@ module.exports = function (app) {
 	app.get('/logout', user.logout);
     app.get('/user',   user.list);
     app.get('/melodyCollection/', melody.getMelodyCollection);
-    app.get('/friend/:id',user.addFriend);
+
+    app.get('/follow/:id',user.follow);
+    app.get('/follow', user.followList);
  
     //melody entity
     app.get('/melody', melody.getMelodyList);

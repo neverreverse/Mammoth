@@ -12,6 +12,17 @@ var express = require('express')
 
 var app = express();
 
+Array.prototype.contains = function(obj) {
+    var i = this.length;
+    while (i--) {
+        if (this[i] == obj) {
+            console.log("return true");
+            return true;
+        }
+    }
+    return false;
+}
+
 app.configure(function () {
     app.set('port', process.env.PORT || 3000);
     app.set('views', __dirname + '/views');
