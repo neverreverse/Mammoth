@@ -29,6 +29,7 @@ module.exports = function (app) {
 
     app.get('/follow/:id',user.follow);
     app.get('/follow', user.followList);
+    app.delete('/follow/:id',user.discardFollow);
  
     //melody entity
     app.get('/melody', melody.getMelodyList);

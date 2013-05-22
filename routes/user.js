@@ -60,7 +60,7 @@ exports.create = function (req, res) {
 exports.follow = function(req, res){
     var user = req.session["user"];
     if(!user){
-        return res.json({state:1,err:"Need login"});
+        return res.json({state:2,err:"Need login"});
     }
 
     var follow_id = req.params['id'];
@@ -108,11 +108,59 @@ exports.follow = function(req, res){
     });
     //return res.json({state:1,err:"Unexpected error"});
 };
+exports.discardFollow = function(req, res){
+    var user = req.session["user"];
+    if(!user){
+        return res.json({state:2,err:"Need login"});
+    }
 
+    var follow_id = req.params['id'];
+    try{
+        var _follow_id = mongoose.Types.ObjectId(follow_id);
+
+    }catch(e){
+        return res.json({state:1,err:'invalid follow id'});        
+    };
+
+    UsersModel.findOne({_id: _follow_id}, function(err, _user){
+        if(err)
+            return res.json({state:1, err:err});
+
+        var fans = _user.fans;
+        if(!fans.contains(user._id)){
+            return res.json({state:1, err: "Not exist in fans list"});
+        }
+
+        UsersModel.findOne({_id: mongoose.Types.ObjectId(user._id)},function(err,__user){
+            if(err)
+                return res.json({state:1, err:err});
+            
+            var follows = __user.follows;
+            if(!follows.contains(follow_id)){
+                return res.json({state:1, err:"Not exist in follow list"});
+            }
+
+            UsersModel.update({_id: mongoose.Types.ObjectId(user._id)},{$pop:{follows:_follow_id}} , function(err,_data){
+                if(err){
+                    return res.json({state:1, err:err});
+                }
+                UsersModel.update({_id: _follow_id},{$pop:{fans:mongoose.Types.ObjectId(user._id)}} , function(err,__data){
+                    if(err){
+                        return res.json({state:1, err:err});
+                    }
+                    return res.json({state:0});
+                });
+                
+            });
+        });
+    });
+
+
+}
 exports.followList = function(req, res){
     var user = req.session["user"];
     if(!user){
-        return res.json({state:1,err:"Need login"});
+        return res.json({state:2,err:"Need login"});
     }
     UsersModel.findOne({_id: mongoose.Types.ObjectId(user._id)},function(err,_user){
         if(err){

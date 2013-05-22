@@ -16,11 +16,22 @@ Array.prototype.contains = function(obj) {
     var i = this.length;
     while (i--) {
         if (this[i] == obj) {
-            console.log("return true");
             return true;
         }
     }
     return false;
+}
+
+Array.prototype.remove = function(obj){
+    if(isNaN(dx)||dx>this.length){return false;} 
+    for(var i=0,n=0;i<this.length;i++) 
+    { 
+        if(this[i]!=this[dx]) 
+        { 
+            this[n++]=this[i] 
+        } 
+    } 
+    this.length-=1 
 }
 
 app.configure(function () {
