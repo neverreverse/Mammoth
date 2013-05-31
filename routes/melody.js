@@ -4,7 +4,11 @@ var MelodyModel = require("../models").Melody;
 var TrackDao = require("../dao/TrackDao");
 var TrackModel = require("../models").Track;
 
+var UserFeed = require("../dao/UserFeedDao");
+
 var mongoose = require('mongoose');
+
+
 
 var fs = require('fs');
 var utils = require("../libs/util");
@@ -13,7 +17,7 @@ exports.getMelodyCollection=function(req,res){
 
 };
 exports.getMelodyList = function(req, res){
-	var query = MelodyModel.find();
+	var query = MelodyModel.find().sort('-create_at');
 	query.exec(function(err,_data){
 		console.log(_data);
 		if(err){
@@ -50,6 +54,12 @@ exports.putMelody=function(req,res){
 	var track = new TrackModel();
 
 	var melody = req.body;
+
+	var user = req.session["user"];
+    if(!user){
+        return res.json({state:2,err:"Need login"});
+    }
+	
 	melody.track = new Array();
 	TrackModel.findOne({_id: mongoose.Types.ObjectId(track_id)}, function(err,_track){
 		if(err){
@@ -65,7 +75,10 @@ exports.putMelody=function(req,res){
 			if(err){
 				return res.json({state:1,err:err});
 			}
-			console.log(data);
+			//send to feed system.
+			var userFeed = new UserFeed();
+			userFeed.dispatchMelody(user, data, null);
+
 			return res.json({state:0,guid:data._id});
 		});
 	});
@@ -135,7 +148,7 @@ exports.putTrack=function(req, res){
 
 exports.getTrackList=function(req,res){
 
-	var query = TrackModel.find();
+	var query = TrackModel.find().sort('-create_at');
 	query.exec(function(err,_data){
 		console.log(_data);
 		if(err){
