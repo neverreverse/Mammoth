@@ -8,7 +8,7 @@ var TrackModel = require("../models").Track;
 var UsersModel = require("./../models").Users;
 var UsersDAO = require("../dao/UserDAO");
 
-var UserFeed = require("../dao/UserFeedDao");
+var UserFeedDao = require("../dao/UserFeedDao");
 
 
 var mongoose = require('mongoose');
@@ -92,8 +92,8 @@ exports.putMelody=function(req,res){
 					return res.json({state:1,err:err});
 				}
 				//send to feed system.
-				var userFeed = new UserFeed();
-				userFeed.dispatchMelody(_user, data, null);
+				var userFeedDao = new UserFeedDao();
+				userFeedDao.dispatchMelody(_user, data, null);
 				return res.json({state:0,melody:data});
 			});
 		});
@@ -132,7 +132,7 @@ exports.putComment=function(req, res){
 		});
 
 	})
-	return res.json({state:1,err:"unexpected error"});
+	//return res.json({state:1,err:"unexpected error"});
 };
 
 exports.putTrack=function(req, res){

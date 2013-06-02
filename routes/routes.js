@@ -25,7 +25,7 @@ module.exports = function (app) {
 	app.post('/login', user.login);
 	app.get('/logout', user.logout);
     app.get('/user',   user.list);
-
+    app.get('/feeds/:id', user.getFeeds);
 
     app.get('/follow/:followerid/:followeeid',user.follow);
     app.get('/follow/:followerid', user.followList);
@@ -41,6 +41,7 @@ module.exports = function (app) {
     app.get('/track', melody.getTrackList);
     app.get('/track/:id', melody.getTrack);
     app.post('/track', melody.putTrack);
+
 
     app.get('/user/:id', user.getUser);
     app.post('/user', user.create);

@@ -8,6 +8,11 @@ var UsersDAO = require("../dao/UserDAO");
 var path = require('path');
 var userDao = new UsersDAO(UsersModel);
 
+var UserFeedDao = require("../dao/UserFeedDao");
+var UserFeedModel = require("./../models").UserFeed;
+
+var userFeedDao = new UserFeedDao(UserFeedModel);
+
 exports.list = function (req, res) {
     userDao.getAll(function(err,_data){
         if(err){
@@ -53,8 +58,18 @@ exports.create = function (req, res) {
             if (err) {
                 return res.json({err:err});
             }
-            req.session["user"] = user;
-            res.json();
+
+            userFeedDao.createUserFeed(user, function(err, data){
+                if(err){
+                    return res.json({err:err});
+                }
+
+                req.session["user"] = user;
+                res.json();
+
+            });
+
+
         });
 
     }) ;  
@@ -241,6 +256,18 @@ exports.followList = function(req, res){
         return res.json({follows:_user.follows});
     });
 };
+
+exports.getFeeds = function(req, res){
+    var user_id = req.params['id'];
+    userFeedDao.getUserFeed(user_id, function(err, data){
+        if(err){
+            return res.json({state:1, err:err});
+        }
+
+        return res.json(data);
+    });
+
+}
 
 exports.login = function (req, res) {
     UsersModel.findOne({name:req.body.name}, function (err, user) {
