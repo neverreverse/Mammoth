@@ -1,7 +1,14 @@
-var DaoBase = require('./DaoBase'),
-    models = require('./../models'),
-    Melody = models.Melody;
+var DaoBase = require('./DaoBase');
+var models = require('./../models');
+var Melody = models.Melody;
 
-var MelodyDao = new DaoBase(Melody);
+var util = require("util");
+
+var MelodyDao = function (melody) {
+    this.melody = melody || {};
+    DaoBase.call(this, this.melody);
+};
+
+util.inherits(MelodyDao, DaoBase);
 
 module.exports = MelodyDao;

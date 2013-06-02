@@ -11,7 +11,8 @@
     "mongodb": "latest",
     "connect-mongo": "latest",
     "connect-flash": "latest",
-    "requirejs": "latest"
+    "requirejs": "latest",
+    "step":"latest"
   },
   "devDependencies": {
     "should": "*",

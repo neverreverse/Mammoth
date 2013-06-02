@@ -25,16 +25,17 @@ module.exports = function (app) {
 	app.post('/login', user.login);
 	app.get('/logout', user.logout);
     app.get('/user',   user.list);
-    app.get('/melodyCollection/', melody.getMelodyCollection);
 
-    app.get('/follow/:id',user.follow);
-    app.get('/follow', user.followList);
-    app.delete('/follow/:id',user.discardFollow);
+
+    app.get('/follow/:followerid/:followeeid',user.follow);
+    app.get('/follow/:followerid', user.followList);
+    app.delete('/follow/:followerid/:followeeid',user.discardFollow);
  
     //melody entity
     app.get('/melody', melody.getMelodyList);
     app.get('/melody/:id', melody.getMelody);
     app.post('/melody',melody.putMelody);
+    app.get('/melodyCollection/', melody.getMelodyCollection);
     app.post('/comment',melody.putComment);
 
     app.get('/track', melody.getTrackList);
