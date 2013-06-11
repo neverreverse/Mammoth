@@ -1,0 +1,2 @@
+set CLASSPATH=./trilobite.jar;./lib/commons-logging-1.1.1.jar;./lib/gp2midi.jar;./lib/junit-3.8.1.jar;./lib/mysql-connector-java-5.1.25.jar
+java -cp %CLASSPATH%  com.fireup.trilobite.tools.trilobiteApp ./conf/properties.config
