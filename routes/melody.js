@@ -44,7 +44,7 @@ exports.getMelody= function (req, res) {
         var _melody_id = mongoose.Types.ObjectId(melody_id);
 
     }catch(e){
-        return res.json({err:'invalid melody  id'});        
+        return res.json({state:1,err:'invalid melody  id'});        
     };
 
     melodyDao.getById(_melody_id,function(err,_melody){

@@ -48,28 +48,26 @@ exports.create = function (req, res) {
 
     userDao.findByName(createUser, function(err, user){
         if (err)
-            return res.json({err:err});
+            return res.json({state:1,err:err});
 
         if (user) {
-            return res.json({err:"User already exists"});
+            return res.json({state:1,err:"User already exists"});
         }
 
         userDao.create(createUser, function(err, user){
             if (err) {
-                return res.json({err:err});
+                return res.json({state:1,err:err});
             }
 
             userFeedDao.createUserFeed(user, function(err, data){
                 if(err){
-                    return res.json({err:err});
+                    return res.json({state:1,err:err});
                 }
 
                 req.session["user"] = user;
-                res.json();
+                res.json({state:0});
 
             });
-
-
         });
 
     }) ;  
