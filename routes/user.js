@@ -270,19 +270,20 @@ exports.getFeeds = function(req, res){
 exports.login = function (req, res) {
     UsersModel.findOne({name:req.body.name}, function (err, user) {
         if (err)
-            return res.json({err:err});
+            return res.json({state:1,err:err});
         if (!user) {
-            return res.json({err:'User does not exist'});
+            return res.json({state:1,err:'User does not exist'});
         }
         if (!user.authenticate(req.body.password))
-            return res.json({err:'invalid password'});
+            return res.json({state:1,err:'invalid password'});
         req.session["user"] = user;
-        res.json(user);
+        res.json({state:0, user: user});
     });
 };
 
 exports.logout = function (req, res) {
     req.session["user"] = null;
-    var html = path.normalize(__dirname + '/../views/index.html');
-    res.sendfile(html);
+    res.json({state:0});
+    //var html = path.normalize(__dirname + '/../views/index.html');
+    //res.sendfile(html);
 };
