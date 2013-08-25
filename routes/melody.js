@@ -56,7 +56,22 @@ exports.getMelody= function (req, res) {
         return res.json(_melody);
     });
 };
+exports.getUserMeldoy=function(req, res){
+	var user_id = req.params['id'];
+	console.log("Get Melody by user ID:"+ user_id);
 
+	userDao.getById(user_id, function(err, _user){
+		if(err){
+			return res.json({state:1, err:"fail to get the user"});
+		}
+		if(!_user){
+			return res.json({state:1, err:"no such user"});
+		}
+
+		return res.json({state:0, melodies: _user.melodies });
+	});
+
+};
 exports.putMelody=function(req,res){
 	var user = req.session["user"];
     if(!user){
@@ -70,7 +85,6 @@ exports.putMelody=function(req,res){
 	var melody = req.body;
 
 	melody.track = new Array();
-
 
 	userDao.getById(author_id, function(err, _user){
 		if(err){
@@ -91,9 +105,19 @@ exports.putMelody=function(req,res){
 				if(err){
 					return res.json({state:1,err:err});
 				}
+				//save to user entity.
+				_user.melodies.push(data.id);
+				userDao.update({_id: _user._id },{$push:{melodies:data._id}} , function(err,_data){
+                    if(err){
+                        return res.json({state:1, err:err});
+                    }
+                });
+
 				//send to feed system.
 				var userFeedDao = new UserFeedDao();
 				userFeedDao.dispatchMelody(_user, data, null);
+
+
 				return res.json({state:0,melody:data});
 			});
 		});

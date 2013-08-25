@@ -36,6 +36,8 @@ module.exports = function (app) {
     app.get('/melody/:id', melody.getMelody);
     app.post('/melody',melody.putMelody);
     app.get('/melodyCollection/', melody.getMelodyCollection);
+    app.get('/userMelody/:id',melody.getUserMeldoy);
+
     app.post('/comment',melody.putComment);
 
     app.get('/track', melody.getTrackList);

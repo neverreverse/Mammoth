@@ -20,7 +20,8 @@ var user_schema = new Schema({
     level:Number,
     address:{city:String, street:String},
     fans:[Schema.ObjectId],
-    follows:[Schema.ObjectId]
+    follows:[Schema.ObjectId],
+    melodies:[Schema.ObjectId]
 });
 
 user_schema.virtual("password").set(function (password) {

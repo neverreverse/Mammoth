@@ -20,7 +20,7 @@ UserFeedDAO.prototype.dispatchMelody = function(user,melody,callback){
 
 	//process.nextTick(function(user,melody,callback){
 
-		var feed = {author_id:user._id, meta_data: melody.description, content: user.name+ " upload a new melody"};
+		var feed = {author_id:user._id, meta_data: melody.description, melody_id: melody._id ,content: user.name+ " upload a new melody!"};
 		for( var i = 0; i < user.fans.length; i++){
 			//console.log(user.fans.[i]);
 			user_feed_id = user.fans[i];
