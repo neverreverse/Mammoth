@@ -15,8 +15,6 @@ UserFeedDAO.prototype.dispatchMelody = function(user,melody,callback){
 
 	if(!user) return;
 	if(!melody) return;
-	console.log(user);
-	console.log(melody);
 
 	//process.nextTick(function(user,melody,callback){
 

@@ -45,7 +45,16 @@ exports.getUser = function(req, res) {
 exports.create = function (req, res) {
     console.log(req.body);
     var createUser = new UsersModel(req.body);
+    if(createUser.name.length == 0){
 
+        return res.json({state:1,err:"User name can not be empty!"});
+
+    }
+
+    if(createUser.password.length==0){
+        return res.json({state:1,err:"Password can not be empty!"});
+
+    }
     userDao.findByName(createUser, function(err, user){
         if (err)
             return res.json({state:1,err:err});
@@ -133,44 +142,6 @@ exports.follow = function(req, res){
             });
         });
     });
-
-
-/*
-
-
-    UsersModel.findOne({_id: _follow_id}, function(err, _user){
-        if(err)
-            return res.json({state:1, err:err});
-        var fans = _user.fans;
-        if(fans.contains(user._id)){
-            return res.json({state:1, err: "Already exists in fans list"});
-        }
-
-        UsersModel.findOne({_id: mongoose.Types.ObjectId(user._id)},function(err,__user){
-            if(err)
-                return res.json({state:1, err:err});
-            
-            var follows = __user.follows;
-            if(follows.contains(follow_id)){
-                return res.json({state:1, err:"Already exists in follow list"});
-            }
-
-            UsersModel.update({_id: mongoose.Types.ObjectId(user._id)},{$push:{follows:_follow_id}} , function(err,_data){
-                if(err){
-                    return res.json({state:1, err:err});
-                }
-                UsersModel.update({_id: _follow_id},{$push:{fans:mongoose.Types.ObjectId(user._id)}} , function(err,__data){
-                    if(err){
-                        return res.json({state:1, err:err});
-                    }
-                    return res.json({state:0});
-                });
-                
-            });
-        });
-    });
-*/
-    //return res.json({state:1,err:"Unexpected error"});
 };
 
 
@@ -276,14 +247,31 @@ exports.login = function (req, res) {
         }
         if (!user.authenticate(req.body.password))
             return res.json({state:1,err:'invalid password'});
+        var token = randomString(16);
         req.session["user"] = user;
-        res.json({state:0, user: user});
+        req.session["token"] = token;
+        res.json({state:0, user: user, token: token});
     });
 };
 
 exports.logout = function (req, res) {
     req.session["user"] = null;
+    req.session["token"] = null;
     res.json({state:0});
     //var html = path.normalize(__dirname + '/../views/index.html');
     //res.sendfile(html);
 };
+
+randomString = function(length) {
+    var chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz'.split('');
+    
+    if (! length) {
+        length = Math.floor(Math.random() * chars.length);
+    }
+    
+    var str = '';
+    for (var i = 0; i < length; i++) {
+        str += chars[Math.floor(Math.random() * chars.length)];
+    }
+    return str;
+}
