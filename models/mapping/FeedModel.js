@@ -1,9 +1,12 @@
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
+var UsersModel = require("./UsersModel");
 
 var feed_schema = new Schema({
-	author_id:{type:Schema.ObjectId},
-	meta_data:{type:String},
+	author:UsersModel,
+	author_name:{type:String},
+	author_image:{type:String},
+	meta_data:{type:Schema.ObjectId},
 	content:{type:String},
 	template:{type:Number},
 	event_type:{type:Number},
