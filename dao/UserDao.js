@@ -28,6 +28,18 @@ UsersDAO.prototype.findByName = function(user, callback){
     });
 }
 
+UsersDAO.prototype.findByEmail = function(user, callback){
+    
+    if(!user){
+        callback({err:"error parameter."});
+    }
+
+    UsersModel.findOne({email:user.email}, function (err, user) {
+        callback(err, user);
+    });
+}
+
+
 /*
 UsersDAO.prototype.save = function (callback) {
     var usersEntity = new UsersModel(this.user);

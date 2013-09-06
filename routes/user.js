@@ -44,18 +44,18 @@ exports.getUser = function(req, res) {
 
 exports.create = function (req, res) {
     console.log(req.body);
+    if(  req.body.email == undefined || isEmail(req.body.email) == false){
+
+        return res.json({state:1,err:"Input a correct Email address!"});
+    }
+
+    if(  req.body.password == undefined || req.body.password.length < 6){
+        return res.json({state:1,err:"Password must be larger than 6!"});
+
+    }
     var createUser = new UsersModel(req.body);
-    if(  createUser.name == undefined ||createUser.name.length == 0){
 
-        return res.json({state:1,err:"User name can not be empty!"});
-
-    }
-
-    if(  createUser.password == undefined || createUser.password.length==0){
-        return res.json({state:1,err:"Password can not be empty!"});
-
-    }
-    userDao.findByName(createUser, function(err, user){
+    userDao.findByEmail(createUser, function(err, user){
         if (err)
             return res.json({state:1,err:err});
 
@@ -239,7 +239,7 @@ exports.getFeeds = function(req, res){
 }
 
 exports.login = function (req, res) {
-    UsersModel.findOne({name:req.body.name}, function (err, user) {
+    UsersModel.findOne({email:req.body.email}, function (err, user) {
         if (err)
             return res.json({state:1,err:err});
         if (!user) {
@@ -274,4 +274,8 @@ randomString = function(length) {
         str += chars[Math.floor(Math.random() * chars.length)];
     }
     return str;
+}
+isEmail = function (str){
+       var reg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/;
+       return reg.test(str);
 }
