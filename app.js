@@ -35,7 +35,7 @@ Array.prototype.remove = function(obj){
 }
 
 app.configure(function () {
-    app.set('port', process.env.PORT || 3000);
+    app.set('port', process.env.PORT || 8000);
     app.set('views', __dirname + '/views');
     app.set('view engine', 'html');
     app.use(express.favicon());
