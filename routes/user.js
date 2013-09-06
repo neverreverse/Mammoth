@@ -45,13 +45,13 @@ exports.getUser = function(req, res) {
 exports.create = function (req, res) {
     console.log(req.body);
     var createUser = new UsersModel(req.body);
-    if(createUser.name.length == 0){
+    if(  createUser.name == undefined ||createUser.name.length == 0){
 
         return res.json({state:1,err:"User name can not be empty!"});
 
     }
 
-    if(createUser.password.length==0){
+    if(  createUser.password == undefined || createUser.password.length==0){
         return res.json({state:1,err:"Password can not be empty!"});
 
     }
