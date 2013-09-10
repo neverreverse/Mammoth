@@ -239,6 +239,7 @@ exports.getFeeds = function(req, res){
 }
 
 exports.login = function (req, res) {
+    console.log(req.body);
     UsersModel.findOne({email:req.body.email}, function (err, user) {
         if (err)
             return res.json({state:1,err:err});
@@ -276,6 +277,6 @@ randomString = function(length) {
     return str;
 }
 isEmail = function (str){
-       var reg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/;
+       var reg = /^([a-zA-Z0-9_-.])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/;
        return reg.test(str);
 }
