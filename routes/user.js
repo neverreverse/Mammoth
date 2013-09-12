@@ -277,6 +277,7 @@ randomString = function(length) {
     return str;
 }
 isEmail = function (str){
-       var reg = /^([a-zA-Z0-9_-\.])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/;
+       //var reg = /^([a-zA-Z0-9_-\.])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/;
+       var reg = /([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
        return reg.test(str);
 }
