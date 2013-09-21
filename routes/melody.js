@@ -78,13 +78,10 @@ exports.putMelody=function(req,res){
         return res.json({state:2,err:"Need login"});
     }
 
-	var track_id = req.body.track_id;
-	var author_id = req.body.author_id;
-
-	var trackDao = new TrackDao(TrackModel);
+	var author_id = user._id;
 	var melody = req.body;
-
-	melody.track = new Array();
+	melody.author_id = author_id;
+	//melody.track = req.body.track;
 
 	userDao.getById(author_id, function(err, _user){
 		if(err){
@@ -93,34 +90,24 @@ exports.putMelody=function(req,res){
 		if(!_user){
 			return res.json({state:1, err:"no such user"});
 		}
-		trackDao.getById(track_id,function(err,_track){
+		melodyDao.create(melody, function(err, data){
 			if(err){
 				return res.json({state:1,err:err});
 			}
-			if(_track==null){
-				return res.json({state:1,err:"Can not find the track"});
-			}
-			melody.track.push( _track);
-			melodyDao.create(melody, function(err, data){
-				if(err){
-					return res.json({state:1,err:err});
-				}
-				//save to user entity.
-				_user.melodies.push(data.id);
-				userDao.update({_id: _user._id },{$push:{melodies:data._id}} , function(err,_data){
-                    if(err){
-                        return res.json({state:1, err:err});
-                    }
-                });
+			//save to user entity.
+			_user.melodies.push(data.id);
+			userDao.update({_id: _user._id },{$push:{melodies:data._id}} , function(err,_data){
+	            if(err){
+	                return res.json({state:1, err:err});
+	            }
+	        });
 
-				//send to feed system.
-				var userFeedDao = new UserFeedDao();
-				userFeedDao.dispatchMelody(_user, data, null);
-
-
-				return res.json({state:0,melody:data});
-			});
+			//send to feed system.
+			var userFeedDao = new UserFeedDao();
+			userFeedDao.dispatchMelody(_user, data, null);
+			return res.json({state:0,melody:data});
 		});
+
 	});
 
 
