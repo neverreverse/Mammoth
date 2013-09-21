@@ -17,6 +17,7 @@ var step = require('step');
 
 var fs = require('fs');
 var utils = require("../libs/util");
+var logger = require('../libs/winston');
 
 var trackDao = new TrackDao(TrackModel);
 var melodyDao = new MelodyDao(MelodyModel);
@@ -27,10 +28,10 @@ exports.getMelodyCollection=function(req,res){
 
 };
 exports.getMelodyList = function(req, res){
-	console.log("Get melody list.");
 	melodyDao.getAll(function(err,_data){
 		if(err){
-			return res.json({state:1, err:err});
+            logger.error("Failed to get melody list, message: "+ err);
+            return res.json({state:1,message:"获取作品列表失败"});
 		}
 		return res.json(_data);
 	});
@@ -38,34 +39,38 @@ exports.getMelodyList = function(req, res){
 
 exports.getMelody= function (req, res) {
 	var melody_id = req.params['id'];
-	console.log("Get Melody by ID:"+ melody_id);
-	
+	logger.info("Get Melody id: "+melody_id);
 	try{
         var _melody_id = mongoose.Types.ObjectId(melody_id);
-
     }catch(e){
-        return res.json({state:1,err:'invalid melody  id'});        
+        logger.error("Invalid melody id, message: "+ e);
+        return res.json({state:1,message:"非法作品ID"});   
     };
 
     melodyDao.getById(_melody_id,function(err,_melody){
-	    if (err)
-	        return res.json({err:err});
-	    if (!_melody) {
-	        return res.json({state:1,err:'Melody does not exists'});
+	    if (err){
+	        logger.error("Failed to get melody list, message: "+ err);
+            return res.json({state:1,message:"查询作品失败"});
+	    }
+   	    if (!_melody) {
+	        logger.error("Failed to get melody");
+            return res.json({state:1,message:"获取作品失败"});
 	    }
         return res.json(_melody);
     });
 };
 exports.getUserMeldoy=function(req, res){
 	var user_id = req.params['id'];
-	console.log("Get Melody by user ID:"+ user_id);
+	logger.info("Get Melody by user ID:"+ user_id);
 
 	userDao.getById(user_id, function(err, _user){
 		if(err){
-			return res.json({state:1, err:"fail to get the user"});
+	        logger.error("Failed to query user list, message: "+ err);
+            return res.json({state:1,message:"查询作品失败"});
 		}
 		if(!_user){
-			return res.json({state:1, err:"no such user"});
+	        logger.error("Failed to get user");
+            return res.json({state:1,message:"用户不存在"});
 		}
 
 		return res.json({state:0, melodies: _user.melodies });
@@ -75,37 +80,41 @@ exports.getUserMeldoy=function(req, res){
 exports.putMelody=function(req,res){
 	var user = req.session["user"];
     if(!user){
-        return res.json({state:2,err:"Need login"});
+        return res.json({state:1,message:"请先登录"});
     }
 
 	var author_id = user._id;
 	var melody = req.body;
 	melody.author_id = author_id;
 	//melody.track = req.body.track;
-
+	logger.info("Put Melody by user ID:"+ author_id);
 	userDao.getById(author_id, function(err, _user){
 		if(err){
-			return res.json({state:1, err:"fail to get the user"});
+	        logger.error("Failed to query user list, message: "+ err);
+            return res.json({state:1,message:"发布作品失败"});
 		}
 		if(!_user){
-			return res.json({state:1, err:"no such user"});
+	        logger.error("Failed to get user list");
+            return res.json({state:1,message:"用户不存在"});
 		}
 		melodyDao.create(melody, function(err, data){
 			if(err){
-				return res.json({state:1,err:err});
+		        logger.error("Failed to create melody, message: "+ err);
+    	        return res.json({state:1,message:"发布作品失败"});
 			}
 			//save to user entity.
 			_user.melodies.push(data.id);
 			userDao.update({_id: _user._id },{$push:{melodies:data._id}} , function(err,_data){
 	            if(err){
-	                return res.json({state:1, err:err});
+			        logger.error("Failed to update user, message: "+ err);
+    		        return res.json({state:1,message:"发布作品失败"});
 	            }
 	        });
 
 			//send to feed system.
 			var userFeedDao = new UserFeedDao();
 			userFeedDao.dispatchMelody(_user, data, null);
-			return res.json({state:0,melody:data});
+			return res.json({state:0,message:"发布作品成功",melody:data});
 		});
 
 	});
@@ -117,15 +126,22 @@ exports.putMelody=function(req,res){
 exports.putComment=function(req, res){
 	var comment = req.body;
 	var melody_id =req.body.melody_id;
-	//console.log({ _id: mongoose.Types.ObjectId(melody_id)});
+	var user = req.session["user"];
 	
+	logger.info("Put comment:"+ user._id, melody_id);
+	
+	if(!user){
+        return res.json({state:1,message:"请先登录"});
+    }
 	MelodyModel.findOne({ _id: mongoose.Types.ObjectId(melody_id)}, function(err, _melody){
 		if(err){
-			return res.json({state:1,err:err});
+	        logger.error("Failed to query melody list, message: "+ err);
+            return res.json({state:1,message:"发布评论失败"});
 		}
 
 		if(_melody==null){
-			return res.json({state:1,err:"Can not find the melody"});
+	        logger.error("Failed to get melody");
+            return res.json({state:1,message:"发布评论失败"});
 		}
 
 		if(_melody.comment==undefined){
@@ -137,9 +153,10 @@ exports.putComment=function(req, res){
 		console.log(_melody);
 		MelodyModel.update({ _id: mongoose.Types.ObjectId(melody_id)}, {comment:_melody.comment},function(err, _data){
 			if(err){
-				return res.json({state:1,err:err});
+	       	 	logger.error("Failed to update melody");
+            	return res.json({state:1,message:"发布评论失败"});
 			}
-			return res.json({state:0});
+			return res.json({state:0,message:"发布评论成功"});
 		});
 
 	})

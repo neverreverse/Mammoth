@@ -12,7 +12,8 @@
     "connect-mongo": "latest",
     "connect-flash": "latest",
     "requirejs": "latest",
-    "step":"latest"
+    "step":"latest",
+    "winston":"latest"
   },
   "devDependencies": {
     "should": "*",
