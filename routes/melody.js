@@ -127,12 +127,10 @@ exports.putComment=function(req, res){
 	var comment = req.body;
 	var melody_id =req.body.melody_id;
 	var user = req.session["user"];
-	
-	logger.info("Put comment:"+ user._id, melody_id);
-	
 	if(!user){
         return res.json({state:1,message:"请先登录"});
     }
+    logger.info("Put comment:"+ user._id, melody_id);
 	MelodyModel.findOne({ _id: mongoose.Types.ObjectId(melody_id)}, function(err, _melody){
 		if(err){
 	        logger.error("Failed to query melody list, message: "+ err);
