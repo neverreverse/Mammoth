@@ -85,7 +85,10 @@ exports.putMelody=function(req,res){
 
 	var author_id = user._id;
 	var melody = req.body;
+	melody.author = user;
 	melody.author_id = author_id;
+	melody.author_name = user.name;
+	melody.author_image = user.image;
 	//melody.track = req.body.track;
 	logger.info("Put Melody by user ID:"+ author_id);
 	userDao.getById(author_id, function(err, _user){
@@ -145,6 +148,11 @@ exports.putComment=function(req, res){
 		if(_melody.comment==undefined){
 			_melody.comment = new Array();
 		}
+		comment.author = user;
+		comment.author_id = author_id;
+		comment.author_name = user.name;
+		comment.author_image = user.image;
+
 
 		_melody.comment.push(comment);
 
