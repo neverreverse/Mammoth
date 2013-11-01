@@ -15,7 +15,7 @@ var user_schema = new Schema({
     hash_password:String,
     sex:Number,
     email:String,
-    image:String,
+    portrait:String,
     phone:String,
     level:Number,
     address:{city:String, street:String},

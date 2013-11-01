@@ -18,7 +18,7 @@ var comment_schema = new Schema({
 });
 
 var melody_schema = new Schema({
-    track: [track_schema],
+    track: {type:String},
     description:{type:String},
     author:UsersModel,
     author_name:{type:String},
