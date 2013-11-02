@@ -46,6 +46,7 @@ module.exports = function (app) {
 
 
     app.get('/user/:id', user.getUser);
+    app.post('/user/:id', user.edit);
     app.post('/user', user.create);
 
 };

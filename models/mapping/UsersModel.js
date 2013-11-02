@@ -18,7 +18,6 @@ var user_schema = new Schema({
     portrait:String,
     phone:String,
     level:Number,
-    address:{city:String, street:String},
     fans:[Schema.ObjectId],
     follows:[Schema.ObjectId],
     melodies:[Schema.ObjectId]

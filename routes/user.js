@@ -28,29 +28,6 @@ exports.list = function (req, res) {
     })
 };
 
-exports.getUser = function(req, res) {
-    var userId = req.params['id'];
-
-    logger.info("Get user by ID: "+ userId);
-    try{
-        var _userId = mongoose.Types.ObjectId(userId);
-    }catch(e){
-        logger.error("Invalid user id, message: "+ e);
-        return res.json({state:1,message:"非法用户ID"});
-    };
-
-    userDao.getById(_userId, function(err,user){
-        if (err){
-            logger.error("Query user failed, message: "+ err);
-            return res.json({state:1,message:"查询用户出错"});
-        }
-        if (!user) {
-            logger.error("Get user failed, message: "+ err);
-            return res.json({state:1,message:"用户不存在"});
-        }
-        return res.json(user);
-    });
-}
 
 exports.create = function (req, res) {
     console.log(req.body);
@@ -97,6 +74,84 @@ exports.create = function (req, res) {
 
     }) ;  
 };
+
+exports.edit = function(req, res) {
+
+    var user = req.session["user"];
+    if(!user){
+        return res.json({state:1,message:"请先登录"});
+    }
+    logger.info("Edit user by ID: "+ user.email + " " + user._id );
+    var editUser=new UsersModel(req.body);
+    userDao.getById(user._id, function(err,user){
+        if (err){
+            logger.error("Query user failed, message: "+ err);
+            return res.json({state:1,message:"查询用户出错"});
+        }
+        if (!user) {
+            logger.error("Get user failed, message: "+ err);
+            return res.json({state:1,message:"用户不存在,更新失败"});
+        }
+        if(typeof(editUser.name) != "undefined"){
+           userDao.update({_id: user._id }, {$set:{name:editUser.name}}, function(err,_data){
+                if (err){
+                    logger.error("Query user failed, message: "+ err);
+                }
+           });
+        }
+
+        if(typeof(editUser.portrait) != "undefined"){
+           userDao.update({_id: user._id }, {$set:{portrait:editUser.portrait}}, function(err,_data){
+                 if (err){
+                    logger.error("Query user failed, message: "+ err);
+                }
+           });
+        }
+        if(typeof(editUser.phone) != "undefined"){
+           userDao.update({_id: user._id }, {$set:{phone:editUser.phone}}, function(err,_data){
+                 if (err){
+                    logger.error("Query user failed, message: "+ err);
+                }           
+           });
+        }
+        if(typeof(editUser.hash_password)  != "undefined"){
+
+           userDao.update({_id: user._id }, {$set:{hash_password:editUser.hash_password}}, function(err,_data){
+                 if (err){
+                    logger.error("Query user failed, message: "+ err);
+                }
+           });
+        }
+        return res.json({state:1,message:"用户信息更新完成"});
+    });
+}
+
+
+exports.getUser = function(req, res) {
+    var userId = req.params['id'];
+
+    logger.info("Get user by ID: "+ userId);
+    try{
+        var _userId = mongoose.Types.ObjectId(userId);
+    }catch(e){
+        logger.error("Invalid user id, message: "+ e);
+        return res.json({state:1,message:"非法用户ID"});
+    };
+
+    userDao.getById(_userId, function(err,user){
+        if (err){
+            logger.error("Query user failed, message: "+ err);
+            return res.json({state:1,message:"查询用户出错"});
+        }
+        if (!user) {
+            logger.error("Get user failed, message: "+ err);
+            return res.json({state:1,message:"用户不存在"});
+        }
+        return res.json(user);
+    });
+}
+
+
 
 exports.follow = function(req, res){
     //authentication check

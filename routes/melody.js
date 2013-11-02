@@ -82,7 +82,7 @@ exports.putMelody=function(req,res){
     if(!user){
         return res.json({state:1,message:"请先登录"});
     }
-
+    logger.info(req.body);
 	var author_id = user._id;
 	var melody = req.body;
 	melody.author = user;
