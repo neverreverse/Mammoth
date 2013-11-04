@@ -12,8 +12,9 @@ var comment_schema = new Schema({
     comment:{type:String},
     author:UsersModel,
     author_name:{type:String},
-    author_image:{type:String},    
-    author_id:{ type:Schema.ObjectId },
+    author_portrait:{type:String},    
+    author_id:{type:Schema.ObjectId},
+    melody_id:{type:Schema.ObjectId},
     create_at:{ type:Date, default:Date.now },
 });
 
@@ -22,7 +23,7 @@ var melody_schema = new Schema({
     description:{type:String},
     author:UsersModel,
     author_name:{type:String},
-    author_image:{type:String},    
+    author_portrait:{type:String},    
     author_id:{ type:Schema.ObjectId},
     play_style:{type:Schema.ObjectId},
     reply_count:{ type:Number, default:0 },

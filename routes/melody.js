@@ -149,9 +149,9 @@ exports.putComment=function(req, res){
 			_melody.comment = new Array();
 		}
 		comment.author = user;
-		comment.author_id = author_id;
+		comment.author_id = user._id;
 		comment.author_name = user.name;
-		comment.author_image = user.image;
+		comment.author_portrait = user.portrait;
 
 
 		_melody.comment.push(comment);
