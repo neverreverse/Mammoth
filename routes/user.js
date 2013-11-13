@@ -206,6 +206,8 @@ exports.follow = function(req, res){
             }
 
             //update the follower
+
+            logger.info("Will add follow realtionship: "+ _follow_id + " on " + _user_id);
             userDao.update({_id: _user_id },{$push:{follows:_follow_id}} , function(err,_data){
                 if(err){
                     logger.error("Update user failed, message: "+ err);
@@ -282,14 +284,14 @@ exports.discardFollow = function(req, res){
             }
 
             //update the follower
-            userDao.update({_id: _follower_id },{$pop:{follows:_followee_id}} , function(err,_data){
+            userDao.update({_id: _follower_id },{$pull:{follows:_followee_id}} , function(err,_data){
                 if(err){
                     logger.error("Query user failed, message: "+ err);
                     return res.json({state:1,message:"查询用户出错"});
                 }
 
                 //update the followee
-                userDao.update({_id: followee_id },{$pop:{fans:_follower_id}} , function(err,_data){
+                userDao.update({_id: followee_id },{$pull:{fans:_follower_id}} , function(err,_data){
                     if(err){
                         logger.error("Failed to discard follow, message: "+ err);
                         return res.json({state:1, message:"取消关注失败"});
